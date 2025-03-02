@@ -7,42 +7,47 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	"github.com/yourusername/go-web-api/internal/api/handlers"
-	custommiddleware "github.com/yourusername/go-web-api/internal/api/middleware"
+	"github.com/umuterturk/go-web-base-fly-io/internal/api/handlers"
+	customMiddleware "github.com/umuterturk/go-web-base-fly-io/internal/api/middleware"
 )
 
-// NewRouter creates and configures a new router
 func NewRouter() chi.Router {
 	r := chi.NewRouter()
 
 	// Middleware
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
-	r.Use(custommiddleware.Logger)
+	r.Use(customMiddleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	// Static file server for the landing page and assets
-	fileServer := http.FileServer(http.Dir("./static"))
-	r.Handle("/static/*", http.StripPrefix("/static", fileServer))
-
-	// Serve static files from root paths
-	r.Handle("/css/*", http.StripPrefix("/css", http.FileServer(http.Dir("./static/css"))))
-	r.Handle("/js/*", http.StripPrefix("/js", http.FileServer(http.Dir("./static/js"))))
-	r.Handle("/img/*", http.StripPrefix("/img", http.FileServer(http.Dir("./static/img"))))
-
-	// Serve the landing page at root
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./static/index.html")
-	})
+	// Setup static file handlers
+	setupStaticFileHandlers(r)
 
 	// API Routes
-	r.Route("/api/v1", func(r chi.Router) {
-		r.Get("/hello", handlers.HelloHandler)
-		r.Get("/health", handlers.HealthHandler)
-	})
+	setupApiRoutes(r)
 
 	// Metrics endpoint
 	r.Handle("/metrics", promhttp.Handler())
 
 	return r
+}
+
+func setupApiRoutes(r chi.Router) {
+	r.Route("/api/v1", func(r chi.Router) {
+		r.Get("/hello", handlers.HelloHandler)
+		r.Get("/health", handlers.HealthHandler)
+	})
+}
+
+func setupStaticFileHandlers(r chi.Router) {
+	fileServer := http.FileServer(http.Dir("./docs"))
+	r.Handle("/docs/*", http.StripPrefix("/docs", fileServer))
+
+	r.Handle("/css/*", http.StripPrefix("/css", http.FileServer(http.Dir("./docs/css"))))
+	r.Handle("/js/*", http.StripPrefix("/js", http.FileServer(http.Dir("./docs/js"))))
+	r.Handle("/img/*", http.StripPrefix("/img", http.FileServer(http.Dir("./docs/img"))))
+
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./docs/index.html")
+	})
 }

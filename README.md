@@ -67,6 +67,7 @@ source ~/.bashrc
 # Verify installation
 go version
 ```
+
 </details>
 
 <details>
@@ -89,6 +90,7 @@ source ~/.zshrc
 # Verify installation
 go version
 ```
+
 </details>
 
 <details>
@@ -97,14 +99,17 @@ go version
 1. Download the installer from [golang.org/dl](https://golang.org/dl/)
 2. Run the installer and follow the prompts
 3. Verify installation by opening Command Prompt or PowerShell:
+
    ```
    go version
    ```
+
 4. Set up environment variables (if not done by installer):
    - Right-click on "This PC" > Properties > Advanced system settings > Environment Variables
    - Add/update the following:
      - GOPATH: `%USERPROFILE%\go`
      - Add to PATH: `%USERPROFILE%\go\bin`
+
 </details>
 
 ### Install golangci-lint
@@ -122,6 +127,7 @@ sudo snap install golangci-lint
 # Verify installation
 golangci-lint --version
 ```
+
 </details>
 
 <details>
@@ -134,6 +140,7 @@ brew install golangci-lint
 # Verify installation
 golangci-lint --version
 ```
+
 </details>
 
 <details>
@@ -153,6 +160,7 @@ choco install golangci-lint
 # Verify installation
 golangci-lint --version
 ```
+
 </details>
 
 ### Install Go Tools
@@ -182,6 +190,7 @@ go install golang.org/x/tools/cmd/godoc@latest              # Documentation serv
    - [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
 
 3. Open the project in VSCode:
+
    ```bash
    code .
    ```
@@ -202,7 +211,7 @@ go install golang.org/x/tools/cmd/godoc@latest              # Documentation serv
 │   │   ├── middleware/    # HTTP middleware
 │   │   └── router.go      # Router setup
 │   └── config/            # Configuration
-├── static/                # Static assets
+├── docs/                  # Static assets to serve (naming is off but did so to use in github pages)
 │   ├── css/               # CSS stylesheets
 │   ├── js/                # JavaScript files
 │   ├── img/               # Images and graphics
@@ -224,7 +233,7 @@ go install golang.org/x/tools/cmd/godoc@latest              # Documentation serv
 
 The project includes GitHub Actions workflows for automated CI/CD:
 
-- **Tests Workflow** (`.github/workflows/tests.yml`): 
+- **Tests Workflow** (`.github/workflows/tests.yml`):
   - Triggers on pushes/PRs to the main branch
   - Sets up Go environment
   - Installs dependencies
@@ -238,6 +247,7 @@ The project includes GitHub Actions workflows for automated CI/CD:
   - Rename from `.base` extension and customize as needed
 
 To enable the deployment workflow:
+
 ```bash
 # Rename the base file to activate it
 mv .github/workflows/deploy.yml.base .github/workflows/deploy.yml
@@ -278,14 +288,15 @@ The project includes a retro pixel art style landing page to demonstrate static 
 This project demonstrates handling static files in a Go web application:
 
 1. **File Structure**
-   - All static assets are in the `static/` directory
+   - All static assets are in the `docs/` directory (naming is off but did so to use in github pages)
    - `index.html` serves as the main landing page
    - CSS, JavaScript, and images are in separate subdirectories
 
 2. **Router Configuration** (in `internal/api/router.go`)
+
    ```go
    // Serve static files
-   fileServer := http.FileServer(http.Dir("static"))
+   fileServer := http.FileServer(http.Dir("docs"))
    r.Handle("/*", fileServer)
    
    // API routes under /api/v1 prefix
@@ -296,7 +307,7 @@ This project demonstrates handling static files in a Go web application:
    ```
 
 3. **Adding New Pages**
-   - Place HTML files in the `static/` directory
+   - Place HTML files in the `docs/` directory
    - Add CSS and JavaScript in respective subdirectories
    - Reference them with paths relative to the static root (e.g., `/css/styles.css`)
 
@@ -329,6 +340,7 @@ go tool cover -html=coverage.out -o coverage.html
 ```
 
 In VSCode:
+
 - Run > Start Debugging > Test Current File
 - Run > Start Debugging > Test All
 
@@ -374,6 +386,7 @@ This project is configured for easy deployment to [Fly.io](https://fly.io), a pl
 <summary><b>Initial Setup</b></summary>
 
 1. Install the Fly.io CLI:
+
    ```bash
    # macOS / Linux
    curl -L https://fly.io/install.sh | sh
@@ -385,6 +398,7 @@ This project is configured for easy deployment to [Fly.io](https://fly.io), a pl
 2. Add flyctl to your PATH (if the installer didn't do it automatically)
 
 3. Sign up or log in to Fly.io:
+
    ```bash
    # Sign up
    fly auth signup
@@ -394,9 +408,11 @@ This project is configured for easy deployment to [Fly.io](https://fly.io), a pl
    ```
 
 4. Verify your installation:
+
    ```bash
    fly version
    ```
+
 </details>
 
 <details>
@@ -405,14 +421,17 @@ This project is configured for easy deployment to [Fly.io](https://fly.io), a pl
 If you've forked this repository, you'll need to update the app name in `fly.toml`:
 
 1. Open `fly.toml` and update the app name:
+
    ```toml
    app = "your-app-name" # Change this to a unique name
    ```
 
 2. Launch the app for the first time:
+
    ```bash
    fly launch
    ```
+
    - When prompted, select "No" to creating a new app
    - Select "Yes" to use an existing configuration
    - Choose your preferred region
@@ -421,21 +440,25 @@ If you've forked this repository, you'll need to update the app name in `fly.tom
    - Select "Yes" to deploy now
 
 3. For subsequent deployments:
+
    ```bash
    fly deploy
    ```
 
 4. View your deployed app:
+
    ```bash
    fly open
    ```
 
 5. Check app status:
+
    ```bash
    fly status
    ```
 
 6. View logs:
+
    ```bash
    fly logs
    ```
@@ -443,6 +466,7 @@ If you've forked this repository, you'll need to update the app name in `fly.tom
 To use the GitHub Actions deployment workflow:
 
 1. Generate a Fly.io API token:
+
    ```bash
    fly auth token
    ```
@@ -453,16 +477,19 @@ To use the GitHub Actions deployment workflow:
    - Value: Your Fly.io API token
 
 3. Rename the deployment workflow file:
+
    ```bash
    mv .github/workflows/deploy.yml.base .github/workflows/deploy.yml
    ```
 
 4. When ready to deploy, include "deploy to fly.io" in your commit message:
+
    ```bash
    git commit -m "Updated application features - deploy to fly.io"
    ```
 
 5. Push to main branch, and the workflow will automatically deploy
+
 </details>
 
 <details>
@@ -480,6 +507,7 @@ fly secrets set PORT=8080 LOG_LEVEL=info
 # View current secrets
 fly secrets list
 ```
+
 </details>
 
 <details>
@@ -497,6 +525,7 @@ fly scale vm shared-cpu-1x
 # View current scale
 fly status
 ```
+
 </details>
 
 <details>
@@ -514,6 +543,7 @@ fly dashboard
 # SSH into the VM
 fly ssh console
 ```
+
 </details>
 
 <details>
@@ -536,6 +566,7 @@ Common issues and solutions:
 4. **Networking issues**:
    - Check your firewall settings with `fly status`
    - Ensure your app is properly handling HTTP requests
+
 </details>
 
 ## Contributing
@@ -559,4 +590,4 @@ If you find this project helpful and would like to support its development:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the LICENSE file for details.

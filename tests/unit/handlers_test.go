@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/yourusername/go-web-api/internal/api/handlers"
+	"github.com/umuterturk/go-web-base-fly-io/internal/api/handlers"
 )
 
 func TestHelloHandler(t *testing.T) {

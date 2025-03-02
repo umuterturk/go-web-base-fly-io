@@ -1,4 +1,4 @@
-module github.com/yourusername/go-web-api
+module github.com/umuterturk/go-web-base-fly-io
 
 go 1.21
 

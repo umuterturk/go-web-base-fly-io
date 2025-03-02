@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/yourusername/go-web-api/internal/api"
-	"github.com/yourusername/go-web-api/internal/config"
+	"github.com/umuterturk/go-web-base-fly-io/internal/api"
+	"github.com/umuterturk/go-web-base-fly-io/internal/config"
 )
 
 func main() {

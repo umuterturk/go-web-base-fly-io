@@ -6,8 +6,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/yourusername/go-web-api/internal/api"
-	"github.com/yourusername/go-web-api/internal/api/handlers"
+	"github.com/umuterturk/go-web-base-fly-io/internal/api"
+	"github.com/umuterturk/go-web-base-fly-io/internal/api/handlers"
 )
 
 func TestAPIEndpoints(t *testing.T) {
