@@ -583,8 +583,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 If you find this project helpful and would like to support its development:
 
-- ☕ [Buy me a coffee](https://www.buymeacoffee.com/codeonbrew)
-- 🐦 Follow me on [X/Twitter](https://x.com/codeonbrew) for updates
+- [☕ Buy me a coffee](https://www.buymeacoffee.com/codeonbrew)
+- [🐦 Follow me on X/Twitter](https://x.com/codeonbrew) for updates
 - ⭐ Star the repository on GitHub
 - 🐛 Report bugs or suggest features through GitHub issues
 
