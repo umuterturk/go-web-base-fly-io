@@ -1,0 +1,72 @@
+linters:
+  disable-all: true
+  enable:
+    # Critical performance and correctness
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    - prealloc      # Finds slice declarations that could potentially be preallocated
+    - gocritic      # Various performance optimizations
+
+    # Security
+    - gosec
+
+    # Minimal style (keeping only essential ones)
+    - gofmt
+
+run:
+  deadline: 5m
+  tests: true
+
+linters-settings:
+  govet:
+    # Enable struct field alignment analysis
+    enable:
+      - fieldalignment
+    
+  gocritic:
+    enabled-tags:
+      - performance
+      - diagnostic
+    disabled-tags:
+      - style
+      - opinionated
+  
+  prealloc:
+    simple: true
+    range-loops: true
+    for-loops: true
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gosec
+        - prealloc
+    
+  # Exclude style-related issues
+  exclude-use-default: false
+  exclude:
+    - "should have comment"
+    - "comment on exported"
+    - "don't use an underscore in package name"
+    - "don't use ALL_CAPS in Go names"
+
+severity:
+  default-severity: warning
+  rules:
+    - linters:
+        - errcheck
+        - gosimple
+        - govet
+        - ineffassign
+        - staticcheck
+        - typecheck
+        - unused
+        - prealloc
+        - gosec
+      severity: error 
