@@ -1,0 +1,174 @@
+/* Retro Pixel Art Style CSS */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+    --bg-color: #0f0f1b;
+    --primary-color: #33ff66;
+    --secondary-color: #ff5566;
+    --accent-color: #ffcc00;
+    --text-color: #ffffff;
+    --pixel-size: 2px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Press Start 2P', cursive;
+    line-height: 1.6;
+    padding: 20px;
+    text-align: center;
+    image-rendering: pixelated;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.pixel-border {
+    border: var(--pixel-size) solid var(--primary-color);
+    box-shadow:
+        var(--pixel-size) var(--pixel-size) 0 0 var(--accent-color),
+        calc(var(--pixel-size) * -1) calc(var(--pixel-size) * -1) 0 0 var(--secondary-color);
+    padding: 20px;
+    margin: 20px 0;
+}
+
+h1 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-shadow:
+        var(--pixel-size) var(--pixel-size) 0 var(--accent-color),
+        calc(var(--pixel-size) * -1) calc(var(--pixel-size) * -1) 0 var(--secondary-color);
+}
+
+h2 {
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+p {
+    margin-bottom: 15px;
+    font-size: 0.8rem;
+}
+
+.btn {
+    background-color: var(--primary-color);
+    border: none;
+    color: var(--bg-color);
+    cursor: pointer;
+    display: inline-block;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    margin: 10px;
+    padding: 10px 20px;
+    text-decoration: none;
+    transition: all 0.1s ease;
+}
+
+.btn:hover {
+    background-color: var(--accent-color);
+    transform: translate(-2px, -2px);
+    box-shadow:
+        var(--pixel-size) var(--pixel-size) 0 0 var(--primary-color),
+        calc(var(--pixel-size) * 2) calc(var(--pixel-size) * 2) 0 0 var(--secondary-color);
+}
+
+.btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+}
+
+.pixel-art {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    margin: 20px auto;
+    display: block;
+}
+
+.feature-list {
+    list-style-type: none;
+    text-align: left;
+    margin: 20px auto;
+    max-width: 500px;
+}
+
+.feature-list li {
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+    font-size: 0.7rem;
+}
+
+.feature-list li::before {
+    content: "►";
+    color: var(--accent-color);
+    position: absolute;
+    left: 0;
+}
+
+.footer {
+    margin-top: 40px;
+    font-size: 0.6rem;
+    color: var(--accent-color);
+}
+
+/* Retro scanlines effect */
+body::after {
+    content: "";
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%,
+            rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 4px;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0.15;
+}
+
+/* Pixel art animation */
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.blink {
+    animation: blink 1s infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    .container {
+        padding: 10px;
+    }
+}
