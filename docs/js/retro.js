@@ -1,6 +1,9 @@
 // Retro Pixel Art JavaScript
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Check if API is available by testing the health endpoint
+    checkApiHealth();
+
     // Add retro sound effects
     const buttons = document.querySelectorAll('.btn');
 
@@ -100,10 +103,104 @@ document.addEventListener('DOMContentLoaded', function () {
     // Add event listener for disabled API demo button
     document.getElementById('api-demo-btn').addEventListener('click', function (e) {
         e.preventDefault();
-        playErrorSound();
-        showDisabledMessage();
+
+        // If the button is no longer disabled, fetch health data
+        if (!this.classList.contains('disabled-btn')) {
+            fetchHealthData();
+        } else {
+            playErrorSound();
+            showDisabledMessage();
+        }
     });
 });
+
+// Function to check if the API health endpoint is available
+function checkApiHealth() {
+    fetch('/api/v1/health')
+        .then(response => {
+            if (response.status === 200) {
+                enableApiDemo();
+                return response.json();
+            } else {
+                throw new Error('API health check failed');
+            }
+        })
+        .then(data => {
+            console.log('API health status:', data);
+        })
+        .catch(error => {
+            console.log('API not available:', error);
+            // API is not available, keep demo disabled (default state)
+        });
+}
+
+// Function to enable the API demo
+function enableApiDemo() {
+    const demoBtn = document.getElementById('api-demo-btn');
+    const apiResult = document.getElementById('api-result');
+    const disabledLinks = document.querySelector('.disabled-links');
+
+    // Enable the button
+    demoBtn.classList.remove('disabled-btn');
+    demoBtn.textContent = 'Check API Health';
+    demoBtn.title = 'Click to check API health status';
+
+    // Update the result area
+    apiResult.classList.remove('api-disabled-text');
+    apiResult.innerHTML = '<span class="retro-small-text">API is available! Click the button to test.</span>';
+
+    // Update links to be clickable
+    const links = disabledLinks.querySelectorAll('.disabled-link-text');
+    disabledLinks.classList.add('enabled-links');
+    disabledLinks.classList.remove('disabled-links');
+
+    links.forEach(link => {
+        const text = link.textContent;
+        const a = document.createElement('a');
+        a.href = text;
+        a.textContent = text;
+        a.classList.add('enabled-link-text');
+        a.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (text === '/api/v1/health') {
+                fetchHealthData();
+            } else if (text === '/metrics') {
+                window.open(text, '_blank');
+            }
+        });
+        link.parentNode.replaceChild(a, link);
+    });
+}
+
+// Function to fetch health data when the button is clicked
+function fetchHealthData() {
+    const apiResult = document.getElementById('api-result');
+
+    apiResult.innerHTML = '<span class="blink">*</span> FETCHING DATA <span class="blink">*</span>';
+
+    fetch('/api/v1/health')
+        .then(response => response.json())
+        .then(data => {
+            playBeepSound();
+            apiResult.innerHTML = `
+                <div class="api-result-success">
+                    <pre class="json-response">${JSON.stringify(data, null, 2)}</pre>
+                    <div class="status-indicator">
+                        <span class="status-dot green"></span> STATUS: ${data.status.toUpperCase()}
+                    </div>
+                </div>
+            `;
+        })
+        .catch(error => {
+            playErrorSound();
+            apiResult.innerHTML = `
+                <div class="api-result-error">
+                    <span class="blink">!</span> ERROR FETCHING DATA <span class="blink">!</span><br>
+                    <span class="retro-small-text">${error.message}</span>
+                </div>
+            `;
+        });
+}
 
 // Activate the retro title effect
 function activateTitleEffect(element) {
