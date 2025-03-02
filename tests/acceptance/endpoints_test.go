@@ -18,7 +18,7 @@ func TestLiveEndpoints(t *testing.T) {
 	}
 
 	t.Run("Hello endpoint", func(t *testing.T) {
-		resp, err := http.Get(fmt.Sprintf("%s/", baseURL))
+		resp, err := http.Get(fmt.Sprintf("%s/api/v1/hello", baseURL))
 		if err != nil {
 			t.Fatalf("Failed to make request: %v", err)
 		}
@@ -45,7 +45,7 @@ func TestLiveEndpoints(t *testing.T) {
 	})
 
 	t.Run("Health endpoint", func(t *testing.T) {
-		resp, err := http.Get(fmt.Sprintf("%s/health", baseURL))
+		resp, err := http.Get(fmt.Sprintf("%s/api/v1/health", baseURL))
 		if err != nil {
 			t.Fatalf("Failed to make request: %v", err)
 		}

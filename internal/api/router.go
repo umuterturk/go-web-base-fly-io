@@ -36,7 +36,7 @@ func NewRouter() chi.Router {
 	})
 
 	// API Routes
-	r.Route("/api", func(r chi.Router) {
+	r.Route("/api/v1", func(r chi.Router) {
 		r.Get("/hello", handlers.HelloHandler)
 		r.Get("/health", handlers.HealthHandler)
 	})

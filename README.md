@@ -288,8 +288,8 @@ This project demonstrates handling static files in a Go web application:
    fileServer := http.FileServer(http.Dir("static"))
    r.Handle("/*", fileServer)
    
-   // API routes under /api prefix
-   r.Route("/api", func(r chi.Router) {
+   // API routes under /api/v1 prefix
+   r.Route("/api/v1", func(r chi.Router) {
        r.Get("/health", handlers.HealthHandler)
        r.Get("/hello", handlers.HelloHandler)
    })
@@ -301,10 +301,8 @@ This project demonstrates handling static files in a Go web application:
    - Reference them with paths relative to the static root (e.g., `/css/styles.css`)
 
 4. **Best Practices**
-   - Use relative paths for assets instead of hardcoded URLs
-   - Minify assets for production deployment
-   - Consider using a build step for complex frontend applications
-   - Keep API endpoints separate under the `/api` prefix
+   - Serve static files from root paths
+   - Keep API endpoints separate under the `/api/v1` prefix
 
 ### Environment Variables
 

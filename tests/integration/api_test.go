@@ -16,7 +16,7 @@ func TestAPIEndpoints(t *testing.T) {
 	defer server.Close()
 
 	t.Run("Hello endpoint", func(t *testing.T) {
-		resp, err := http.Get(server.URL + "/")
+		resp, err := http.Get(server.URL + "/api/v1/hello")
 		if err != nil {
 			t.Fatalf("Failed to make request: %v", err)
 		}
@@ -41,7 +41,7 @@ func TestAPIEndpoints(t *testing.T) {
 	})
 
 	t.Run("Health endpoint", func(t *testing.T) {
-		resp, err := http.Get(server.URL + "/health")
+		resp, err := http.Get(server.URL + "/api/v1/health")
 		if err != nil {
 			t.Fatalf("Failed to make request: %v", err)
 		}
