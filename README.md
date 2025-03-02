@@ -287,16 +287,151 @@ docker run -p 8080:8080 go-web-api
 
 ### Fly.io
 
+This project is configured for easy deployment to [Fly.io](https://fly.io), a platform for running full-stack apps globally.
+
+<details>
+<summary><b>Initial Setup</b></summary>
+
+1. Install the Fly.io CLI:
+   ```bash
+   # macOS / Linux
+   curl -L https://fly.io/install.sh | sh
+   
+   # Windows PowerShell
+   iwr https://fly.io/install.ps1 -useb | iex
+   ```
+
+2. Add flyctl to your PATH (if the installer didn't do it automatically)
+
+3. Sign up or log in to Fly.io:
+   ```bash
+   # Sign up
+   fly auth signup
+   
+   # Or log in
+   fly auth login
+   ```
+
+4. Verify your installation:
+   ```bash
+   fly version
+   ```
+</details>
+
+<details>
+<summary><b>Deploying After Forking</b></summary>
+
+If you've forked this repository, you'll need to update the app name in `fly.toml`:
+
+1. Open `fly.toml` and update the app name:
+   ```toml
+   app = "your-app-name" # Change this to a unique name
+   ```
+
+2. Launch the app for the first time:
+   ```bash
+   fly launch
+   ```
+   - When prompted, select "No" to creating a new app
+   - Select "Yes" to use an existing configuration
+   - Choose your preferred region
+   - Select "No" to setting up a PostgreSQL database
+   - Select "No" to setting up a Redis database
+   - Select "Yes" to deploy now
+
+3. For subsequent deployments:
+   ```bash
+   fly deploy
+   ```
+
+4. View your deployed app:
+   ```bash
+   fly open
+   ```
+
+5. Check app status:
+   ```bash
+   fly status
+   ```
+
+6. View logs:
+   ```bash
+   fly logs
+   ```
+</details>
+
+<details>
+<summary><b>Environment Variables</b></summary>
+
+Set environment variables for your Fly.io deployment:
+
 ```bash
-# Install flyctl
-curl -L https://fly.io/install.sh | sh
+# Set a single environment variable
+fly secrets set PORT=8080
 
-# Login to Fly.io
-fly auth login
+# Set multiple environment variables
+fly secrets set PORT=8080 LOG_LEVEL=info
 
-# Deploy the application
-fly deploy
+# View current secrets
+fly secrets list
 ```
+</details>
+
+<details>
+<summary><b>Scaling</b></summary>
+
+Scale your application on Fly.io:
+
+```bash
+# Scale to multiple instances
+fly scale count 2
+
+# Scale machine size
+fly scale vm shared-cpu-1x
+
+# View current scale
+fly status
+```
+</details>
+
+<details>
+<summary><b>Monitoring</b></summary>
+
+Monitor your application:
+
+```bash
+# View logs
+fly logs
+
+# View metrics dashboard
+fly dashboard
+
+# SSH into the VM
+fly ssh console
+```
+</details>
+
+<details>
+<summary><b>Troubleshooting</b></summary>
+
+Common issues and solutions:
+
+1. **Deployment fails with "App name already exists"**:
+   - Change the app name in `fly.toml`
+   - Or create a new app with `fly apps create your-app-name`
+
+2. **Port binding issues**:
+   - Ensure your app is listening on the port specified by the `PORT` environment variable
+   - The default port in this template is 8080
+
+3. **Resource constraints**:
+   - Scale up your VM with `fly scale vm shared-cpu-2x`
+   - Or add more memory with `fly scale memory 1024`
+
+4. **Networking issues**:
+   - Check your firewall settings with `fly status`
+   - Ensure your app is properly handling HTTP requests
+</details>
 
 ## Contributing
 
