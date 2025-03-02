@@ -16,6 +16,7 @@ A production-ready Go web API starter template with proper configuration, testin
 - ✅ Git hooks for code quality
 - ✅ VSCode integration
 - ✅ Strict linting with performance focus
+- ✅ Retro pixel art landing page demo
 
 ## Prerequisites
 
@@ -193,6 +194,11 @@ go install golang.org/x/tools/cmd/godoc@latest              # Documentation serv
 │   │   ├── middleware/   # HTTP middleware
 │   │   └── router.go     # Router setup
 │   └── config/           # Configuration
+├── static/               # Static assets
+│   ├── css/              # CSS stylesheets
+│   ├── js/               # JavaScript files
+│   ├── img/              # Images and graphics
+│   └── index.html        # Landing page
 ├── tests/                # Test suites
 │   ├── acceptance/       # End-to-end tests
 │   ├── integration/      # Integration tests
@@ -222,6 +228,17 @@ go run cmd/api/main.go
 # VSCode
 F5 or Run > Start Debugging (Launch API configuration)
 ```
+
+### Retro Landing Page
+
+The project includes a retro pixel art style landing page to demonstrate static file serving:
+
+- Visit `http://localhost:8080/` after starting the server
+- Features interactive elements and API integration
+- Includes a theme switcher and Konami code easter egg (↑↑↓↓←→←→BA)
+- Demonstrates serving static assets (HTML, CSS, JS, SVG)
+
+![Retro Landing Page](https://i.imgur.com/placeholder-image.png)
 
 ### Environment Variables
 
