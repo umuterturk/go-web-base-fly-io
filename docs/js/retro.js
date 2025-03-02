@@ -162,7 +162,7 @@ function enableApiDemo() {
         a.classList.add('enabled-link-text');
         a.addEventListener('click', function (e) {
             e.preventDefault();
-            if (text === '/api/v1/health') {
+            if (text === '/hello') {
                 fetchHealthData();
             } else if (text === '/metrics') {
                 window.open(text, '_blank');
@@ -178,7 +178,7 @@ function fetchHealthData() {
 
     apiResult.innerHTML = '<span class="blink">*</span> FETCHING DATA <span class="blink">*</span>';
 
-    fetch('/api/v1/health')
+    fetch('/api/v1/hello')
         .then(response => response.json())
         .then(data => {
             playBeepSound();
@@ -186,7 +186,7 @@ function fetchHealthData() {
                 <div class="api-result-success">
                     <pre class="json-response">${JSON.stringify(data, null, 2)}</pre>
                     <div class="status-indicator">
-                        <span class="status-dot green"></span> STATUS: ${data.status.toUpperCase()}
+                        <span class="status-dot green"></span> STATUS: UP
                     </div>
                 </div>
             `;
