@@ -2,6 +2,8 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/umuterturk/go-web-base-fly-io)](https://goreportcard.com/report/github.com/umuterturk/go-web-base-fly-io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow.svg)](https://www.buymeacoffee.com/codeonbrew)
+[![Twitter Follow](https://img.shields.io/badge/follow-%40codeonbrew-1DA1F2?logo=twitter&style=social)](https://twitter.com/codeonbrew)
 
 A production-ready Go web API starter template with proper configuration, testing, and development tooling. Deploy to [Fly.io](https://fly.io) with ease.
 
@@ -17,6 +19,7 @@ A production-ready Go web API starter template with proper configuration, testin
 - ✅ VSCode integration
 - ✅ Strict linting with performance focus
 - ✅ Retro pixel art landing page demo
+- ✅ GitHub Actions CI/CD workflows
 
 ## Prerequisites
 
@@ -37,6 +40,9 @@ go mod download
 
 # Run the server
 go run cmd/api/main.go
+
+# Access the retro landing page
+open http://localhost:8080
 ```
 
 ## Detailed Setup Guide
@@ -186,31 +192,58 @@ go install golang.org/x/tools/cmd/godoc@latest              # Documentation serv
 
 ```
 .
-├── cmd/                  # Application entry points
-│   └── api/              # API server
-├── internal/             # Private application code
-│   ├── api/              # API-specific code
-│   │   ├── handlers/     # HTTP handlers
-│   │   ├── middleware/   # HTTP middleware
-│   │   └── router.go     # Router setup
-│   └── config/           # Configuration
-├── static/               # Static assets
-│   ├── css/              # CSS stylesheets
-│   ├── js/               # JavaScript files
-│   ├── img/              # Images and graphics
-│   └── index.html        # Landing page
-├── tests/                # Test suites
-│   ├── acceptance/       # End-to-end tests
-│   ├── integration/      # Integration tests
-│   └── unit/             # Unit tests
-├── .golangci.yml         # Linter configuration
-├── Dockerfile            # Container definition
-├── fly.toml              # Fly.io configuration
-├── go.mod                # Go module definition
-└── README.md             # This file
+├── .github/               # GitHub configuration
+│   └── workflows/         # GitHub Actions workflows
+├── cmd/                   # Application entry points
+│   └── api/               # API server
+├── internal/              # Private application code
+│   ├── api/               # API-specific code
+│   │   ├── handlers/      # HTTP handlers
+│   │   ├── middleware/    # HTTP middleware
+│   │   └── router.go      # Router setup
+│   └── config/            # Configuration
+├── static/                # Static assets
+│   ├── css/               # CSS stylesheets
+│   ├── js/                # JavaScript files
+│   ├── img/               # Images and graphics
+│   └── index.html         # Landing page
+├── tests/                 # Test suites
+│   ├── acceptance/        # End-to-end tests
+│   ├── integration/       # Integration tests
+│   └── unit/              # Unit tests
+├── .golangci.yml          # Linter configuration
+├── Dockerfile             # Container definition
+├── fly.toml               # Fly.io configuration
+├── go.mod                 # Go module definition
+└── README.md              # This file
 ```
 
 ## Development Workflow
+
+### GitHub Actions Workflows
+
+The project includes GitHub Actions workflows for automated CI/CD:
+
+- **Tests Workflow** (`.github/workflows/tests.yml`): 
+  - Triggers on pushes/PRs to the main branch
+  - Sets up Go environment
+  - Installs dependencies
+  - Runs linter checks with golangci-lint
+  - Executes all tests with race condition detection
+
+- **Deployment Workflow** (`.github/workflows/deploy.yml.base`):
+  - Activates after successful test workflow completion
+  - Deploys to Fly.io when commit messages contain "deploy to fly.io"
+  - Requires setting up a `FLY_API_TOKEN` secret in your repository
+  - Rename from `.base` extension and customize as needed
+
+To enable the deployment workflow:
+```bash
+# Rename the base file to activate it
+mv .github/workflows/deploy.yml.base .github/workflows/deploy.yml
+
+# Add your Fly.io API token as a repository secret named FLY_API_TOKEN
+```
 
 ### Git Hooks
 
@@ -239,6 +272,39 @@ The project includes a retro pixel art style landing page to demonstrate static 
 - Demonstrates serving static assets (HTML, CSS, JS, SVG)
 
 ![Retro Landing Page](https://i.imgur.com/placeholder-image.png)
+
+### Working with Static Pages
+
+This project demonstrates handling static files in a Go web application:
+
+1. **File Structure**
+   - All static assets are in the `static/` directory
+   - `index.html` serves as the main landing page
+   - CSS, JavaScript, and images are in separate subdirectories
+
+2. **Router Configuration** (in `internal/api/router.go`)
+   ```go
+   // Serve static files
+   fileServer := http.FileServer(http.Dir("static"))
+   r.Handle("/*", fileServer)
+   
+   // API routes under /api prefix
+   r.Route("/api", func(r chi.Router) {
+       r.Get("/health", handlers.HealthHandler)
+       r.Get("/hello", handlers.HelloHandler)
+   })
+   ```
+
+3. **Adding New Pages**
+   - Place HTML files in the `static/` directory
+   - Add CSS and JavaScript in respective subdirectories
+   - Reference them with paths relative to the static root (e.g., `/css/styles.css`)
+
+4. **Best Practices**
+   - Use relative paths for assets instead of hardcoded URLs
+   - Minify assets for production deployment
+   - Consider using a build step for complex frontend applications
+   - Keep API endpoints separate under the `/api` prefix
 
 ### Environment Variables
 
@@ -375,6 +441,30 @@ If you've forked this repository, you'll need to update the app name in `fly.tom
    ```bash
    fly logs
    ```
+
+To use the GitHub Actions deployment workflow:
+
+1. Generate a Fly.io API token:
+   ```bash
+   fly auth token
+   ```
+
+2. Add the token as a secret in your GitHub repository:
+   - Go to Settings > Secrets and variables > Actions > New repository secret
+   - Name: `FLY_API_TOKEN`
+   - Value: Your Fly.io API token
+
+3. Rename the deployment workflow file:
+   ```bash
+   mv .github/workflows/deploy.yml.base .github/workflows/deploy.yml
+   ```
+
+4. When ready to deploy, include "deploy to fly.io" in your commit message:
+   ```bash
+   git commit -m "Updated application features - deploy to fly.io"
+   ```
+
+5. Push to main branch, and the workflow will automatically deploy
 </details>
 
 <details>
@@ -459,6 +549,15 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+### Supporting the Project
+
+If you find this project helpful and would like to support its development:
+
+- ☕ [Buy me a coffee](https://www.buymeacoffee.com/codeonbrew)
+- 🐦 Follow me on [X/Twitter](https://x.com/codeonbrew) for updates
+- ⭐ Star the repository on GitHub
+- 🐛 Report bugs or suggest features through GitHub issues
 
 ## License
 

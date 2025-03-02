@@ -20,6 +20,40 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Add retro effect to main title
+    const mainTitle = document.getElementById('mainTitle');
+    if (mainTitle) {
+        mainTitle.addEventListener('mouseenter', function () {
+            activateTitleEffect(this);
+        });
+
+        mainTitle.addEventListener('mouseleave', function () {
+            deactivateTitleEffect(this);
+        });
+    }
+
+    // Add special effects for social buttons
+    const socialButtons = document.querySelectorAll('.social-link');
+    socialButtons.forEach((button, index) => {
+        // Add staggered animation delay
+        button.style.animationDelay = `${index * 0.15}s`;
+
+        button.addEventListener('mouseover', function () {
+            playSocialHoverSound();
+            createPixelTrail(this);
+        });
+
+        // Add focus effects for accessibility
+        button.addEventListener('focus', function () {
+            this.style.maxWidth = '150px';
+            playSocialHoverSound(true); // quieter sound
+        });
+
+        button.addEventListener('blur', function () {
+            this.style.maxWidth = ''; // Reset to CSS value
+        });
+    });
+
     // Initialize any pixel art animations
     initPixelAnimations();
 
@@ -38,6 +72,173 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+// Activate the retro title effect
+function activateTitleEffect(element) {
+    // Play a special sound effect
+    playTitleSound();
+
+    // Add the active class for visual effects
+    element.classList.add('active');
+
+    // Create the glitch effect
+    const glitchInterval = setInterval(() => {
+        element.classList.add('glitch');
+        setTimeout(() => {
+            element.classList.remove('glitch');
+        }, 100);
+    }, 300);
+
+    // Store the interval ID so we can clear it later
+    element.dataset.glitchInterval = glitchInterval;
+
+    // Create pixel dust effect
+    createPixelDust(element);
+}
+
+// Deactivate the title effect
+function deactivateTitleEffect(element) {
+    // Remove the active class
+    element.classList.remove('active');
+    element.classList.remove('glitch');
+
+    // Clear the glitch interval
+    if (element.dataset.glitchInterval) {
+        clearInterval(parseInt(element.dataset.glitchInterval));
+        delete element.dataset.glitchInterval;
+    }
+}
+
+// Create pixel dust effect
+function createPixelDust(element) {
+    const rect = element.getBoundingClientRect();
+    const container = document.querySelector('.container');
+
+    for (let i = 0; i < 15; i++) {
+        setTimeout(() => {
+            const pixel = document.createElement('div');
+            pixel.style.position = 'absolute';
+            pixel.style.width = '3px';
+            pixel.style.height = '3px';
+            pixel.style.backgroundColor = getRandomColor();
+            pixel.style.left = `${rect.left + Math.random() * rect.width}px`;
+            pixel.style.top = `${rect.top + Math.random() * rect.height}px`;
+            pixel.style.zIndex = '100';
+            pixel.style.pointerEvents = 'none';
+            pixel.style.opacity = '1';
+            pixel.style.transition = 'all 0.8s ease';
+
+            container.appendChild(pixel);
+
+            setTimeout(() => {
+                const dirX = Math.random() * 60 - 30;
+                const dirY = Math.random() * -40 - 10;
+                pixel.style.transform = `translate(${dirX}px, ${dirY}px) rotate(${Math.random() * 360}deg)`;
+                pixel.style.opacity = '0';
+
+                setTimeout(() => {
+                    container.removeChild(pixel);
+                }, 800);
+            }, 10);
+        }, i * 30);
+    }
+}
+
+// Get a random retro color
+function getRandomColor() {
+    const colors = [
+        getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
+        getComputedStyle(document.documentElement).getPropertyValue('--secondary-color'),
+        getComputedStyle(document.documentElement).getPropertyValue('--accent-color')
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+
+// Play title hover sound
+function playTitleSound() {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    // Create an oscillator for a more complex sound
+    const oscillator1 = audioContext.createOscillator();
+    const oscillator2 = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator1.type = 'square';
+    oscillator1.frequency.setValueAtTime(150, audioContext.currentTime);
+    oscillator1.frequency.exponentialRampToValueAtTime(500, audioContext.currentTime + 0.2);
+
+    oscillator2.type = 'sawtooth';
+    oscillator2.frequency.setValueAtTime(100, audioContext.currentTime);
+    oscillator2.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.1);
+
+    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+    oscillator1.connect(gainNode);
+    oscillator2.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator1.start();
+    oscillator2.start();
+
+    oscillator1.stop(audioContext.currentTime + 0.3);
+    oscillator2.stop(audioContext.currentTime + 0.3);
+}
+
+// Play a special sound for social button hover
+function playSocialHoverSound(isQuiet = false) {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4
+    oscillator.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.1); // A5
+
+    // Lower volume if requested (for focus events)
+    const volume = isQuiet ? 0.05 : 0.1;
+    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.2);
+}
+
+// Create pixel trail effect for social buttons
+function createPixelTrail(element) {
+    const rect = element.getBoundingClientRect();
+    const container = document.querySelector('.container');
+
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+            const pixel = document.createElement('div');
+            pixel.style.position = 'absolute';
+            pixel.style.width = '4px';
+            pixel.style.height = '4px';
+            pixel.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
+            pixel.style.left = `${rect.left + Math.random() * rect.width}px`;
+            pixel.style.top = `${rect.top + Math.random() * rect.height}px`;
+            pixel.style.zIndex = '100';
+            pixel.style.pointerEvents = 'none';
+            pixel.style.opacity = '1';
+            pixel.style.transition = 'all 0.5s ease';
+
+            container.appendChild(pixel);
+
+            setTimeout(() => {
+                pixel.style.transform = `translate(${Math.random() * 20 - 10}px, ${-20 - Math.random() * 30}px)`;
+                pixel.style.opacity = '0';
+
+                setTimeout(() => {
+                    container.removeChild(pixel);
+                }, 500);
+            }, 10);
+        }, i * 50);
+    }
+}
 
 // Play a retro beep sound
 function playBeepSound() {
@@ -101,108 +302,176 @@ function fetchApiDemo() {
 // Toggle between different retro themes
 function toggleRetroTheme() {
     const root = document.documentElement;
-    const currentBg = getComputedStyle(root).getPropertyValue('--bg-color').trim();
+    const themes = [
+        // Default theme (already in CSS)
+        {
+            bg: '#0f0f1b',
+            primary: '#33ff66',
+            secondary: '#ff5566',
+            accent: '#ffcc00',
+            text: '#ffffff'
+        },
+        // Amber monochrome (classic terminal)
+        {
+            bg: '#0a0a0a',
+            primary: '#ffbf00',
+            secondary: '#cc9900',
+            accent: '#ffdd66',
+            text: '#ffffcc'
+        },
+        // Gameboy palette
+        {
+            bg: '#0f380f',
+            primary: '#8bac0f',
+            secondary: '#306230',
+            accent: '#9bbc0f',
+            text: '#c6d0b0'
+        },
+        // CGA palette
+        {
+            bg: '#000000',
+            primary: '#55ffff',
+            secondary: '#ff55ff',
+            accent: '#ffffff',
+            text: '#ffff55'
+        },
+        // ZX Spectrum
+        {
+            bg: '#000000',
+            primary: '#00d8d8',
+            secondary: '#d80000',
+            accent: '#ffff00',
+            text: '#ffffff'
+        }
+    ];
 
-    // Cycle through different retro themes
-    if (currentBg === '#0f0f1b') {
-        // Switch to green terminal theme
-        root.style.setProperty('--bg-color', '#001100');
-        root.style.setProperty('--primary-color', '#00ff00');
-        root.style.setProperty('--secondary-color', '#008800');
-        root.style.setProperty('--accent-color', '#00aa00');
-    } else if (currentBg === '#001100') {
-        // Switch to amber terminal theme
-        root.style.setProperty('--bg-color', '#100a00');
-        root.style.setProperty('--primary-color', '#ffb000');
-        root.style.setProperty('--secondary-color', '#ff8800');
-        root.style.setProperty('--accent-color', '#ffcc00');
-    } else {
-        // Back to default theme
-        root.style.setProperty('--bg-color', '#0f0f1b');
-        root.style.setProperty('--primary-color', '#33ff66');
-        root.style.setProperty('--secondary-color', '#ff5566');
-        root.style.setProperty('--accent-color', '#ffcc00');
-    }
-}
+    // Get current theme index or default to 0
+    let themeIndex = parseInt(localStorage.getItem('retroThemeIndex') || '0');
 
-// Konami code easter egg
-function activateEasterEgg() {
-    // Flash the screen
-    const flashElement = document.createElement('div');
-    flashElement.style.position = 'fixed';
-    flashElement.style.top = '0';
-    flashElement.style.left = '0';
-    flashElement.style.width = '100%';
-    flashElement.style.height = '100%';
-    flashElement.style.backgroundColor = '#ffffff';
-    flashElement.style.zIndex = '9999';
-    flashElement.style.opacity = '0';
-    flashElement.style.transition = 'opacity 0.1s';
+    // Advance to next theme
+    themeIndex = (themeIndex + 1) % themes.length;
 
-    document.body.appendChild(flashElement);
+    // Apply new theme
+    const newTheme = themes[themeIndex];
+    root.style.setProperty('--bg-color', newTheme.bg);
+    root.style.setProperty('--primary-color', newTheme.primary);
+    root.style.setProperty('--secondary-color', newTheme.secondary);
+    root.style.setProperty('--accent-color', newTheme.accent);
+    root.style.setProperty('--text-color', newTheme.text);
+
+    // Save the current theme index
+    localStorage.setItem('retroThemeIndex', themeIndex.toString());
+
+    // Create a "flash" effect
+    const flashOverlay = document.createElement('div');
+    flashOverlay.style.position = 'fixed';
+    flashOverlay.style.top = '0';
+    flashOverlay.style.left = '0';
+    flashOverlay.style.width = '100%';
+    flashOverlay.style.height = '100%';
+    flashOverlay.style.backgroundColor = '#ffffff';
+    flashOverlay.style.opacity = '0.3';
+    flashOverlay.style.pointerEvents = 'none';
+    flashOverlay.style.zIndex = '9999';
+    flashOverlay.style.transition = 'opacity 0.3s ease';
+
+    document.body.appendChild(flashOverlay);
 
     setTimeout(() => {
-        flashElement.style.opacity = '1';
-        playBeepSound();
-
+        flashOverlay.style.opacity = '0';
         setTimeout(() => {
-            flashElement.style.opacity = '0';
+            document.body.removeChild(flashOverlay);
+        }, 300);
+    }, 50);
+}
 
-            setTimeout(() => {
-                document.body.removeChild(flashElement);
+// Konami code easter egg activation
+function activateEasterEgg() {
+    playEasterEggSound();
 
-                // Add some fun pixel art elements
-                const pixelRain = document.createElement('div');
-                pixelRain.className = 'pixel-rain';
-                pixelRain.style.position = 'fixed';
-                pixelRain.style.top = '0';
-                pixelRain.style.left = '0';
-                pixelRain.style.width = '100%';
-                pixelRain.style.height = '100%';
-                pixelRain.style.pointerEvents = 'none';
-                pixelRain.style.zIndex = '9998';
+    // Create falling pixels animation
+    const container = document.querySelector('.container');
+    for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+            createFallingPixel(container);
+        }, i * 100);
+    }
 
-                document.body.appendChild(pixelRain);
+    // Flash the screen
+    const flashOverlay = document.createElement('div');
+    flashOverlay.style.position = 'fixed';
+    flashOverlay.style.top = '0';
+    flashOverlay.style.left = '0';
+    flashOverlay.style.width = '100%';
+    flashOverlay.style.height = '100%';
+    flashOverlay.style.backgroundColor = getRandomColor();
+    flashOverlay.style.opacity = '0.5';
+    flashOverlay.style.pointerEvents = 'none';
+    flashOverlay.style.zIndex = '9998';
+    flashOverlay.style.transition = 'opacity 0.5s ease';
 
-                // Create falling pixels
-                for (let i = 0; i < 50; i++) {
-                    createFallingPixel(pixelRain);
-                }
+    document.body.appendChild(flashOverlay);
 
-                // Remove the effect after 10 seconds
-                setTimeout(() => {
-                    document.body.removeChild(pixelRain);
-                }, 10000);
-            }, 200);
-        }, 100);
-    }, 10);
+    setTimeout(() => {
+        flashOverlay.style.opacity = '0';
+        setTimeout(() => {
+            document.body.removeChild(flashOverlay);
+        }, 500);
+    }, 100);
+}
+
+// Play a special sound for the easter egg
+function playEasterEggSound() {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    // Create a more complex sound
+    oscillator.type = 'sawtooth';
+    oscillator.frequency.setValueAtTime(110, audioContext.currentTime);
+
+    // Create a sequence of notes
+    const notes = [110, 220, 440, 880, 440, 220];
+    let time = audioContext.currentTime;
+
+    notes.forEach((note, index) => {
+        time += 0.1;
+        oscillator.frequency.setValueAtTime(note, time);
+    });
+
+    // Connect and play
+    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.8);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.8);
 }
 
 // Create a falling pixel for the easter egg
 function createFallingPixel(container) {
     const pixel = document.createElement('div');
-    const size = Math.floor(Math.random() * 10) + 5;
-    const colors = ['#33ff66', '#ff5566', '#ffcc00', '#66ccff'];
-
     pixel.style.position = 'absolute';
-    pixel.style.width = `${size}px`;
-    pixel.style.height = `${size}px`;
-    pixel.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-    pixel.style.left = `${Math.random() * 100}%`;
-    pixel.style.top = `-${size}px`;
-    pixel.style.opacity = Math.random() * 0.5 + 0.5;
+    pixel.style.width = '10px';
+    pixel.style.height = '10px';
+    pixel.style.backgroundColor = getRandomColor();
+    pixel.style.left = `${Math.random() * window.innerWidth}px`;
+    pixel.style.top = '-10px';
+    pixel.style.zIndex = '9997';
+    pixel.style.pointerEvents = 'none';
+    pixel.style.transition = 'all 3s cubic-bezier(0.2, 0.9, 0.4, 1.1)';
 
-    container.appendChild(pixel);
+    document.body.appendChild(pixel);
 
-    const duration = Math.random() * 5 + 3;
-    const delay = Math.random() * 5;
+    // Animate falling with a slight delay
+    setTimeout(() => {
+        pixel.style.transform = `translate(${Math.random() * 200 - 100}px, ${window.innerHeight + 10}px) rotate(${Math.random() * 720}deg)`;
 
-    pixel.animate([
-        { transform: 'translateY(0)', opacity: 1 },
-        { transform: `translateY(${window.innerHeight + size}px)`, opacity: 0.5 }
-    ], {
-        duration: duration * 1000,
-        delay: delay * 1000,
-        iterations: Infinity
-    });
+        // Remove the pixel after animation
+        setTimeout(() => {
+            document.body.removeChild(pixel);
+        }, 3000);
+    }, 10);
 } 
