@@ -1,0 +1,27 @@
+{
+    "go.useLanguageServer": true,
+    "go.lintTool": "golangci-lint",
+    "go.lintFlags": [
+        "--fast"
+    ],
+    "go.testTimeout": "300s",
+    "go.coverOnSave": true,
+    "go.coverageDecorator": {
+        "type": "highlight",
+        "coveredHighlightColor": "rgba(64,128,128,0.2)",
+        "uncoveredHighlightColor": "rgba(128,64,64,0.2)",
+        "coveredGutterStyle": "blockblue",
+        "uncoveredGutterStyle": "blockred"
+    },
+    "go.toolsManagement.autoUpdate": true,
+    "[go]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    },
+    "gopls": {
+        "ui.semanticTokens": true,
+        "formatting.gofumpt": true
+    }
+}

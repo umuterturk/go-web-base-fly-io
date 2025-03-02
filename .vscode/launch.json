@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch API",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/api/main.go",
+            "env": {
+                "PORT": "8080",
+                "LOG_LEVEL": "debug"
+            }
+        },
+        {
+            "name": "Test Current File",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            "program": "${fileDirname}",
+            "showLog": true
+        },
+        {
+            "name": "Test All",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            "program": "${workspaceFolder}/...",
+            "showLog": true
+        }
+    ]
+}

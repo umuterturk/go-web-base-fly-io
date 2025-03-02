@@ -10,18 +10,27 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+coverage.html
 
 # Dependency directories (remove the comment below to include it)
 vendor/
 
 # Go workspace file
 go.work
+go.work.sum
 
 # IDE specific files
 .idea
-.vscode
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
 *.swp
 *.swo
+
+# Debug files
+__debug_bin
+debug.test
 
 # OS specific files
 .DS_Store

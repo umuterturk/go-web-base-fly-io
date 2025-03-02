@@ -1,4 +1,4 @@
-app = "go-web-api"
+app = "ENTER_YOUR_APP_NAME"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
